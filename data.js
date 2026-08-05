@@ -426,18 +426,6 @@ const DEFAULT_PRODUCTS = [
     options: []
   },
   {
-    id: "mb_izmir_bomba",
-    categoryId: "desserts",
-    name: "İzmir Bomba",
-    description: "İncecik çıtır hamur içerisinde akışkan sıcak pralin çikolata dolgusu.",
-    price: 60,
-    image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80",
-    popular: true,
-    inStock: true,
-    badges: ["Sıcak Çikolatalı"],
-    options: []
-  },
-  {
     id: "mb_panini_tavuk",
     categoryId: "food",
     name: "Kremalı Tavuk Susamlı Panini Sandviç",
@@ -483,30 +471,6 @@ const DEFAULT_PRODUCTS = [
     popular: false,
     inStock: true,
     badges: ["Alman Çöreği"],
-    options: []
-  },
-  {
-    id: "mb_cheeseburger",
-    categoryId: "food",
-    name: "Dana Cheeseburger",
-    description: "Özel dana burger köftesi, erimiş cheddar peyniri, kornişon turşu ve burger sos.",
-    price: 210,
-    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80",
-    popular: true,
-    inStock: true,
-    badges: ["Burger"],
-    options: []
-  },
-  {
-    id: "mb_pizza_karisik",
-    categoryId: "food",
-    name: "Karışık Pizza",
-    description: "Özel domates sos, mozzarella peyniri, sucuk, sosis, mısır, zeytin ve biber.",
-    price: 220,
-    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
-    popular: true,
-    inStock: true,
-    badges: ["Sıcak Pizza"],
     options: []
   }
 ];
@@ -584,7 +548,7 @@ class CafeStore {
           if (fileProducts.length > 0) {
             try {
               localStorage.setItem('cafe_products', JSON.stringify(fileProducts));
-            } catch (e) {}
+            } catch (e) { }
             return fileProducts;
           }
         }
@@ -601,7 +565,7 @@ class CafeStore {
 
     try {
       localStorage.setItem('cafe_products', JSON.stringify(products));
-    } catch (e) {}
+    } catch (e) { }
 
     CafeStore.notifyDataChange('products_updated');
 
@@ -701,14 +665,14 @@ class CafeStore {
     try {
       localStorage.removeItem('cafe_orders');
       localStorage.removeItem('cafe_notifications');
-    } catch (e) {}
+    } catch (e) { }
     CafeStore.notifyDataChange('orders_updated');
 
     try {
       await fetch(`https://qr-cafe-demo-default-rtdb.firebaseio.com/orders_v3.json`, {
         method: 'DELETE'
       });
-    } catch (e) {}
+    } catch (e) { }
   }
 
   static async fetchOrdersFromCloud() {
@@ -721,7 +685,7 @@ class CafeStore {
           list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
           try {
             localStorage.setItem('cafe_orders', JSON.stringify(list));
-          } catch (e) {}
+          } catch (e) { }
           return list;
         }
       }
@@ -737,7 +701,7 @@ class CafeStore {
       orders.unshift(order);
       try {
         localStorage.setItem('cafe_orders', JSON.stringify(orders));
-      } catch (e) {}
+      } catch (e) { }
       CafeStore.notifyDataChange('orders_updated');
     }
 
@@ -774,7 +738,7 @@ class CafeStore {
       order.updatedAt = new Date().toISOString();
       try {
         localStorage.setItem('cafe_orders', JSON.stringify(orders));
-      } catch (e) {}
+      } catch (e) { }
       CafeStore.notifyDataChange('orders_updated');
     }
 
@@ -789,7 +753,7 @@ class CafeStore {
         headers: { 'Title': 'Siparis Durum' },
         body: JSON.stringify({ orderId, status: newStatus, updatedAt: Date.now() })
       });
-    } catch (e) {}
+    } catch (e) { }
   }
 
   static getNotifications() {
@@ -808,7 +772,7 @@ class CafeStore {
       n.read = true;
       try {
         localStorage.setItem('cafe_notifications', JSON.stringify(notifs));
-      } catch (e) {}
+      } catch (e) { }
       CafeStore.notifyDataChange('notification_updated');
     }
   }
@@ -820,7 +784,7 @@ class CafeStore {
     }
     try {
       window.dispatchEvent(new CustomEvent('cafe_data_sync', { detail: { type, timestamp: Date.now() } }));
-    } catch (e) {}
+    } catch (e) { }
   }
 
   static listenCloudOrders(onNewOrder) {
@@ -847,13 +811,13 @@ class CafeStore {
               }
               try {
                 localStorage.setItem('cafe_orders', JSON.stringify(orders));
-              } catch (e) {}
+              } catch (e) { }
               if (onNewOrder) onNewOrder(order);
             }
           }
-        } catch (err) {}
+        } catch (err) { }
       };
-    } catch (e) {}
+    } catch (e) { }
   }
 
   static listenCloudStatus(onStatusChange) {
@@ -877,14 +841,14 @@ class CafeStore {
                 order.status = payload.status;
                 try {
                   localStorage.setItem('cafe_orders', JSON.stringify(orders));
-                } catch (e) {}
+                } catch (e) { }
                 if (onStatusChange) onStatusChange(payload);
               }
             }
           }
-        } catch (err) {}
+        } catch (err) { }
       };
-    } catch (e) {}
+    } catch (e) { }
   }
 
   // 4. UYGULAMANIN HATA VERMEMESİ İÇİN EKLENEN BOŞ DİNLEYİCİ
