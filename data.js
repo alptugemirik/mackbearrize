@@ -1,6 +1,6 @@
 /**
  * QR Kafe - Menü Verileri, Ürünler & Sipariş Katmanı (data.js)
- * SADECE MENU.JSON İLE %100 UYUMLU VE TEMİZ KAFE MANTIK KATMANI
+ * FIREBASE REALTIME DATABASE ENTEGRASYONLU VERSİYON
  */
 
 const DEFAULT_CATEGORIES = [
@@ -571,42 +571,32 @@ class CafeStore {
     }
   }
 
+  // 1. ÜRÜNLERİ FİREBASE'DEN ÇEKECEK ŞEKİLDE GÜNCELLENDİ
   static async fetchProductsFromCloud() {
-    // Doğrudan sunucudaki / GitHub Pages'deki menu.json dosyasını çek (ÖNCELİKLİ TEK GERÇEK KAYNAK)
     try {
-      const res = await fetch(`menu.json?v=${Date.now()}`, { cache: 'no-store' });
+      // GitHub'daki menu.json yerine, direkt Firebase veritabanına istek atıyoruz
+      const res = await fetch(`https://qr-cafe-demo-default-rtdb.firebaseio.com/products_v3.json?v=${Date.now()}`, { cache: 'no-store' });
       if (res.ok) {
-        const fileProducts = await res.json();
-        if (fileProducts && Array.isArray(fileProducts) && fileProducts.length > 0) {
-          try {
-            // YENİ GÜNCEL DOSYADAKİ SİLİNMİŞ VEYA DEĞİŞMİŞ ÜRÜNLERİ ANINDA TARAYICI HAFIZASINA BASSIN
-            localStorage.setItem('cafe_products', JSON.stringify(fileProducts));
-          } catch (e) {}
-          return fileProducts;
+        const data = await res.json();
+        if (data) {
+          // Firebase veriyi bazen obje bazen dizi döndürebilir, bunu diziye çeviriyoruz
+          const fileProducts = Array.isArray(data) ? data : Object.values(data).filter(Boolean);
+          if (fileProducts.length > 0) {
+            try {
+              localStorage.setItem('cafe_products', JSON.stringify(fileProducts));
+            } catch (e) {}
+            return fileProducts;
+          }
         }
       }
     } catch (e) {
-      console.warn('fetchProductsFromCloud menu.json fetch error:', e);
+      console.warn('fetchProductsFromCloud Firebase fetch error:', e);
     }
     return CafeStore.getProducts();
   }
 
-  static toggleProductStock(productId) {
-    const products = CafeStore.getProducts();
-    const p = products.find(item => item.id === productId);
-    if (!p) return;
-
-    p.inStock = !p.inStock;
-
-    try {
-      localStorage.setItem('cafe_products', JSON.stringify(products));
-    } catch (e) {}
-
-    CafeStore.notifyDataChange('products_updated');
-    return p.inStock;
-  }
-
-  static saveProducts(products) {
+  // 2. ÜRÜNLERİ FİREBASE'E KAYDEDECEK ŞEKİLDE GÜNCELLENDİ
+  static async saveProducts(products) {
     if (!products || !Array.isArray(products)) return { success: false };
 
     try {
@@ -614,7 +604,30 @@ class CafeStore {
     } catch (e) {}
 
     CafeStore.notifyDataChange('products_updated');
+
+    // Verileri Firebase'e anında yüklüyoruz
+    try {
+      await fetch(`https://qr-cafe-demo-default-rtdb.firebaseio.com/products_v3.json`, {
+        method: 'PUT', // Tüm ürün listesini günceller
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(products)
+      });
+    } catch (e) {
+      console.error('Firebase saveProducts error:', e);
+    }
+
     return { success: true };
+  }
+
+  // 3. FİREBASE'İ BEKLEMESİ İÇİN (async/await) DİĞER METOTLAR GÜNCELLENDİ
+  static async toggleProductStock(productId) {
+    const products = CafeStore.getProducts();
+    const p = products.find(item => item.id === productId);
+    if (!p) return;
+
+    p.inStock = !p.inStock;
+    await CafeStore.saveProducts(products);
+    return p.inStock;
   }
 
   static downloadMenuJSON() {
@@ -639,7 +652,7 @@ class CafeStore {
         try {
           const parsed = JSON.parse(e.target.result);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            CafeStore.saveProducts(parsed);
+            await CafeStore.saveProducts(parsed);
             resolve(parsed);
           } else {
             reject(new Error('Geçersiz menu.json formatı'));
@@ -653,26 +666,26 @@ class CafeStore {
     });
   }
 
-  static addProduct(product) {
+  static async addProduct(product) {
     const products = CafeStore.getProducts();
     products.unshift(product);
-    return CafeStore.saveProducts(products);
+    return await CafeStore.saveProducts(products);
   }
 
-  static updateProduct(product) {
+  static async updateProduct(product) {
     const products = CafeStore.getProducts();
     const idx = products.findIndex(p => p.id === product.id);
     if (idx >= 0) {
       products[idx] = { ...products[idx], ...product };
-      return CafeStore.saveProducts(products);
+      return await CafeStore.saveProducts(products);
     }
     return { success: false };
   }
 
-  static deleteProduct(id) {
+  static async deleteProduct(id) {
     let products = CafeStore.getProducts();
     products = products.filter(p => p.id !== id);
-    return CafeStore.saveProducts(products);
+    return await CafeStore.saveProducts(products);
   }
 
   static getOrders() {
@@ -872,5 +885,10 @@ class CafeStore {
         } catch (err) {}
       };
     } catch (e) {}
+  }
+
+  // 4. UYGULAMANIN HATA VERMEMESİ İÇİN EKLENEN BOŞ DİNLEYİCİ
+  static listenCloudProducts(onProductsChange) {
+    // app.js dosyası setInterval ile (1.5 saniyede bir) ürünleri çektiği için bu fonksiyon şimdilik sadece uyumluluk sağlamak adına boş bırakılmıştır.
   }
 }
