@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>QR KAFE - MACKBEAR COFFEE</title>
-  <meta name="description" content="MACKBEAR COFFEE - Masadan QR kod ile kolayca menüyü inceleyin, sipariş verin ve siparişiniz hazır olduğunda bardan teslim alın." />
-  <link rel="stylesheet" href="style.css" />
+  <meta name="description"
+    content="MACKBEAR COFFEE - Masadan QR kod ile kolayca menüyü inceleyin, sipariş verin ve siparişiniz hazır olduğunda bardan teslim alın." />
+  <link rel="stylesheet" href="style.css?v2" />
 </head>
+
 <body>
 
   <div class="app-container">
@@ -17,12 +20,15 @@
           <div class="brand-icon">🐻☕</div>
           <div class="brand-title">
             <h1 style="letter-spacing: -0.01em;">QR KAFE</h1>
-            <p style="font-weight: 800; color: var(--primary); letter-spacing: 0.05em; font-size: 0.8rem; text-transform: uppercase;">MACKBEAR COFFEE</p>
+            <p
+              style="font-weight: 800; color: var(--primary); letter-spacing: 0.05em; font-size: 0.8rem; text-transform: uppercase;">
+              MACKBEAR COFFEE</p>
           </div>
         </div>
         <div style="display: flex; gap: 6px; align-items: center;">
           <div class="table-pill" id="tablePill">📍 Masa 01</div>
-          <button id="refreshMenuBtn" title="Menüyü Güncelle" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 6px 10px; border-radius: var(--radius-full); font-size: 0.8rem; cursor: pointer; color: var(--text-main);">
+          <button id="refreshMenuBtn" title="Menüyü Güncelle"
+            style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 6px 10px; border-radius: var(--radius-full); font-size: 0.8rem; cursor: pointer; color: var(--text-main);">
             🔄
           </button>
         </div>
@@ -33,7 +39,8 @@
         <button class="select-table-btn" id="selectTableBtn">
           <span>🪑 Masa Değiştir</span>
         </button>
-        <div style="font-size: 0.78rem; color: var(--primary); font-weight: 700; display: flex; align-items: center; gap: 4px; background: var(--primary-light); padding: 6px 12px; border-radius: var(--radius-full);">
+        <div
+          style="font-size: 0.78rem; color: var(--primary); font-weight: 700; display: flex; align-items: center; gap: 4px; background: var(--primary-light); padding: 6px 12px; border-radius: var(--radius-full);">
           <span>⚡ MACKBEAR Self-Servis</span>
         </div>
       </div>
@@ -43,11 +50,13 @@
     <div id="liveOrderTrackerSection" style="display: none;">
       <div class="live-tracker-card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <div style="font-size: 0.85rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 6px;">
+          <div
+            style="font-size: 0.85rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 6px;">
             <span>⚡ CANLI SİPARİŞ TAKİBİ</span>
             <span id="trackerOrderId" style="color: var(--text-muted); font-size: 0.78rem;">(#ORD-0000)</span>
           </div>
-          <div id="trackerStatusBadge" style="font-size: 0.75rem; font-weight: 700; background: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: var(--radius-full);">
+          <div id="trackerStatusBadge"
+            style="font-size: 0.75rem; font-weight: 700; background: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: var(--radius-full);">
             Sipariş İletildi
           </div>
         </div>
@@ -98,9 +107,10 @@
     <main class="products-section">
       <div class="section-title">
         <span>MACKBEAR Menü</span>
-        <span style="font-size: 0.75rem; color: var(--text-muted);">Siparişiniz hazır olunca ekranınız uyaracaktır</span>
+        <span style="font-size: 0.75rem; color: var(--text-muted);">Siparişiniz hazır olunca ekranınız
+          uyaracaktır</span>
       </div>
-      
+
       <div class="products-grid" id="productsGrid">
         <!-- Dinamik ürün kartları -->
       </div>
@@ -130,7 +140,7 @@
       <div class="flash-icon-pulse">⚡</div>
       <h1 class="flash-title">SİPARİŞİNİZ HAZIR!</h1>
       <p class="flash-subtitle">Lütfen Siparişinizi MACKBEAR Bardandan / Teslim Noktasından Alınız</p>
-      
+
       <div class="flash-order-info" id="flashOrderInfo">
         <!-- Masa ve Sipariş Numarası -->
       </div>
@@ -168,7 +178,8 @@
       <div id="cartModalBody">
         <!-- Dinamik sepet ürünleri -->
       </div>
-      <button id="submitOrderBtn" class="view-cart-btn" style="width: 100%; justify-content: center; margin-top: 16px; display: none;">
+      <button id="submitOrderBtn" class="view-cart-btn"
+        style="width: 100%; justify-content: center; margin-top: 16px; display: none;">
         🚀 Siparişi Onayla ve Gönder
       </button>
     </div>
@@ -206,7 +217,8 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- JS Kütüphaneleri -->
-  <script src="data.js"></script>
-  <script src="app.js"></script>
+  <script src="data.js?v2"></script>
+  <script src="app.js?v2"></script>
 </body>
+
 </html>
