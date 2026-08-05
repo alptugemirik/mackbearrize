@@ -539,7 +539,7 @@ class CafeStore {
   static async fetchProductsFromCloud() {
     try {
       // GitHub'daki menu.json yerine, direkt Firebase veritabanına istek atıyoruz
-      const res = await fetch(`https://qr-cafe-demo-default-rtdb.firebaseio.com/products_v3.json?v=${Date.now()}`, { cache: 'no-store' });
+      const res = await fetch(`https://mackbearrize1-default-rtdb.europe-west1.firebasedatabase.app/products_v3.json?v=${Date.now()}`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         if (data) {
@@ -571,7 +571,7 @@ class CafeStore {
 
     // Verileri Firebase'e anında yüklüyoruz
     try {
-      await fetch(`https://qr-cafe-demo-default-rtdb.firebaseio.com/products_v3.json`, {
+      await fetch(`https://mackbearrize1-default-rtdb.europe-west1.firebasedatabase.app/products_v3.json`, {
         method: 'PUT', // Tüm ürün listesini günceller
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(products)
@@ -669,7 +669,7 @@ class CafeStore {
     CafeStore.notifyDataChange('orders_updated');
 
     try {
-      await fetch(`https://qr-cafe-demo-default-rtdb.firebaseio.com/orders_v3.json`, {
+      await fetch(`https://mackbearrize1-default-rtdb.europe-west1.firebasedatabase.app/orders_v3.json`, {
         method: 'DELETE'
       });
     } catch (e) { }
@@ -677,7 +677,7 @@ class CafeStore {
 
   static async fetchOrdersFromCloud() {
     try {
-      const res = await fetch(`https://qr-cafe-demo-default-rtdb.firebaseio.com/orders_v3.json?v=${Date.now()}`, { cache: 'no-store' });
+      const res = await fetch(`https://mackbearrize1-default-rtdb.europe-west1.firebasedatabase.app/orders_v3.json?v=${Date.now()}`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         if (data) {
@@ -708,7 +708,7 @@ class CafeStore {
     const payloadString = JSON.stringify(order);
 
     try {
-      await fetch(`https://qr-cafe-demo-default-rtdb.firebaseio.com/orders_v3/${order.id}.json`, {
+      await fetch(`https://mackbearrize1-default-rtdb.europe-west1.firebasedatabase.app/orders_v3/${order.id}.json`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: payloadString
@@ -743,7 +743,7 @@ class CafeStore {
     }
 
     try {
-      await fetch(`https://qr-cafe-demo-default-rtdb.firebaseio.com/orders_v3/${orderId}/status.json`, {
+      await fetch(`https://mackbearrize1-default-rtdb.europe-west1.firebasedatabase.app/orders_v3/${orderId}/status.json`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newStatus)
