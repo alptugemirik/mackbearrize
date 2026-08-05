@@ -574,7 +574,7 @@
     "price": 135,
     "image": "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=600&q=80",
     "popular": true,
-    "inStock": true,
+    "inStock": false,
     "badges": [
       "İtalyan"
     ],
@@ -602,7 +602,7 @@
     "price": 140,
     "image": "https://images.unsplash.com/photo-1586788680404-328248283776?auto=format&fit=crop&w=600&q=80",
     "popular": true,
-    "inStock": true,
+    "inStock": false,
     "badges": [
       "Popüler Pasta"
     ],
@@ -616,7 +616,7 @@
     "price": 60,
     "image": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80",
     "popular": true,
-    "inStock": true,
+    "inStock": false,
     "badges": [
       "Sıcak Çikolatalı"
     ],
@@ -630,7 +630,7 @@
     "price": 175,
     "image": "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=600&q=80",
     "popular": true,
-    "inStock": true,
+    "inStock": false,
     "badges": [
       "Sıcak Panini"
     ],
@@ -644,7 +644,7 @@
     "price": 170,
     "image": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=80",
     "popular": true,
-    "inStock": true,
+    "inStock": false,
     "badges": [
       "Popüler Sandviç"
     ],
@@ -658,7 +658,7 @@
     "price": 95,
     "image": "https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=600&q=80",
     "popular": true,
-    "inStock": true,
+    "inStock": false,
     "badges": [
       "Taze Fırın"
     ],
@@ -672,7 +672,7 @@
     "price": 75,
     "image": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=600&q=80",
     "popular": false,
-    "inStock": true,
+    "inStock": false,
     "badges": [
       "Alman Çöreği"
     ],
