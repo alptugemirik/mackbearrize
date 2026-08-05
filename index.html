@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>QR KAFE - MACKBEAR COFFEE</title>
+  <meta name="description" content="MACKBEAR COFFEE - Masadan QR kod ile kolayca menüyü inceleyin, sipariş verin ve siparişiniz hazır olduğunda bardan teslim alın." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="glass-header">
+      <div class="top-nav">
+        <div class="brand-badge">
+          <div class="brand-icon">🐻☕</div>
+          <div class="brand-title">
+            <h1 style="letter-spacing: -0.01em;">QR KAFE</h1>
+            <p style="font-weight: 800; color: var(--primary); letter-spacing: 0.05em; font-size: 0.8rem; text-transform: uppercase;">MACKBEAR COFFEE</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <div class="table-pill" id="tablePill">📍 Masa 01</div>
+          <button id="refreshMenuBtn" title="Menüyü Güncelle" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 6px 10px; border-radius: var(--radius-full); font-size: 0.8rem; cursor: pointer; color: var(--text-main);">
+            🔄
+          </button>
+        </div>
+      </div>
+
+      <!-- Self-Servis Bilgi Barı -->
+      <div class="table-bar">
+        <button class="select-table-btn" id="selectTableBtn">
+          <span>🪑 Masa Değiştir</span>
+        </button>
+        <div style="font-size: 0.78rem; color: var(--primary); font-weight: 700; display: flex; align-items: center; gap: 4px; background: var(--primary-light); padding: 6px 12px; border-radius: var(--radius-full);">
+          <span>⚡ MACKBEAR Self-Servis</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- CANLI SİPARİŞ DURUM İLERLEME ÇUBUĞU (STEPPER PROGRESS BAR) -->
+    <div id="liveOrderTrackerSection" style="display: none;">
+      <div class="live-tracker-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <div style="font-size: 0.85rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 6px;">
+            <span>⚡ CANLI SİPARİŞ TAKİBİ</span>
+            <span id="trackerOrderId" style="color: var(--text-muted); font-size: 0.78rem;">(#ORD-0000)</span>
+          </div>
+          <div id="trackerStatusBadge" style="font-size: 0.75rem; font-weight: 700; background: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: var(--radius-full);">
+            Sipariş İletildi
+          </div>
+        </div>
+
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;" id="trackerSubText">
+          Siparişiniz mutfak ekranına ulaştı.
+        </div>
+
+        <!-- 3 Adımlı İlerleme Çubuğu -->
+        <div class="stepper-progress">
+          <div class="stepper-progress-fill" id="stepperProgressFill" style="width: 0%;"></div>
+
+          <!-- Adım 1: Sipariş Alındı / Görüldü -->
+          <div class="step-item active" id="step1">
+            <div class="step-circle" id="step1Icon">📋</div>
+            <div class="step-label">Sipariş Alındı</div>
+          </div>
+
+          <!-- Adım 2: Hazırlanıyor -->
+          <div class="step-item" id="step2">
+            <div class="step-circle" id="step2Icon">☕</div>
+            <div class="step-label">Hazırlanıyor</div>
+          </div>
+
+          <!-- Adım 3: Tamamlandı / Bardan Alınız -->
+          <div class="step-item" id="step3">
+            <div class="step-circle" id="step3Icon">⚡</div>
+            <div class="step-label">Hazır! Bardan Al</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Box -->
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="MACKBEAR kahve, Cool-Lime, tatlı ara..." />
+      </div>
+    </div>
+
+    <!-- Categories Horizontal Scroll -->
+    <div class="categories-scroll" id="categoriesList">
+      <!-- Dinamik doldurulur -->
+    </div>
+
+    <!-- Products Section -->
+    <main class="products-section">
+      <div class="section-title">
+        <span>MACKBEAR Menü</span>
+        <span style="font-size: 0.75rem; color: var(--text-muted);">Siparişiniz hazır olunca ekranınız uyaracaktır</span>
+      </div>
+      
+      <div class="products-grid" id="productsGrid">
+        <!-- Dinamik ürün kartları -->
+      </div>
+    </main>
+
+    <!-- Floating Cart Bar -->
+    <div class="floating-cart-bar" id="floatingCartBar" style="display: none;">
+      <div class="cart-summary">
+        <div class="cart-icon-badge">
+          🛒
+          <span class="cart-count" id="cartBadgeCount">0</span>
+        </div>
+        <div class="cart-total-text">
+          <span class="cart-total-label">Sepet Toplamı</span>
+          <span class="cart-total-val" id="cartTotalVal">0 ₺</span>
+        </div>
+      </div>
+      <button class="view-cart-btn" id="viewCartBtn">
+        Sepeti Göster ➔
+      </button>
+    </div>
+  </div>
+
+  <!-- FULLSCREEN SELF-SERVİS SİPARİŞ HAZIR FLAŞ UYARISI -->
+  <div class="ready-flash-overlay" id="readyFlashOverlay">
+    <div class="flash-alert-card">
+      <div class="flash-icon-pulse">⚡</div>
+      <h1 class="flash-title">SİPARİŞİNİZ HAZIR!</h1>
+      <p class="flash-subtitle">Lütfen Siparişinizi MACKBEAR Bardandan / Teslim Noktasından Alınız</p>
+      
+      <div class="flash-order-info" id="flashOrderInfo">
+        <!-- Masa ve Sipariş Numarası -->
+      </div>
+
+      <button class="flash-dismiss-btn" id="dismissFlashBtn">
+        👍 Siparişi Teslim Aldım
+      </button>
+    </div>
+  </div>
+
+  <!-- MODALS -->
+
+  <!-- 1. Ürün Detay & Özelleştirme Modalı -->
+  <div class="modal-overlay" id="productModalOverlay">
+    <div class="bottom-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <h3 style="font-size: 1.1rem; color: var(--text-main);">Ürün Detayı ve Tercihler</h3>
+        <button class="close-btn">&times;</button>
+      </div>
+      <div id="productModalBody">
+        <!-- Dinamik içerik -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Sepet Modalı -->
+  <div class="modal-overlay" id="cartModalOverlay">
+    <div class="bottom-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <h3 style="font-size: 1.1rem; color: var(--text-main);">Sipariş Sepetiniz</h3>
+        <button class="close-btn">&times;</button>
+      </div>
+      <div id="cartModalBody">
+        <!-- Dinamik sepet ürünleri -->
+      </div>
+      <button id="submitOrderBtn" class="view-cart-btn" style="width: 100%; justify-content: center; margin-top: 16px; display: none;">
+        🚀 Siparişi Onayla ve Gönder
+      </button>
+    </div>
+  </div>
+
+  <!-- 3. Canlı Sipariş Takip Modalı -->
+  <div class="modal-overlay" id="statusModalOverlay">
+    <div class="bottom-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <h3 style="font-size: 1.1rem; color: var(--text-main);">Siparişinizin Durumu</h3>
+        <button class="close-btn">&times;</button>
+      </div>
+      <div id="statusModalBody">
+        <!-- Dinamik sipariş adımları -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Masa Seçim Modalı -->
+  <div class="modal-overlay" id="tableModalOverlay">
+    <div class="bottom-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <h3 style="font-size: 1.1rem; color: var(--text-main);">Masa Numarası Seçimi</h3>
+        <button class="close-btn">&times;</button>
+      </div>
+      <div id="tableModalBody">
+        <!-- Masa listesi -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Bildirim Kabı -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- JS Kütüphaneleri -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>MACKBEAR KITCHEN - Mutfak & Bar KDS Ekranı</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+  <!-- BAR/MUTFAK KORUMA PIN KİLİT EKRANI -->
+  <div class="modal-overlay" id="adminAuthOverlay" style="display: flex; background: rgba(15, 17, 23, 0.98); z-index: 10000; align-items: center; justify-content: center;">
+    <div class="glass-card" style="width: 100%; max-width: 360px; padding: 28px; text-align: center; border: 1px solid var(--border-active); box-shadow: var(--shadow-main);">
+      <div style="font-size: 3rem; margin-bottom: 8px;">🔒</div>
+      <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">MACKBEAR Bar Paneli</h2>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 20px;">Yetkisiz erişimi engellemek için Bar PIN kodunu giriniz</p>
+      
+      <div id="pinDisplay" style="font-size: 2.2rem; font-weight: 900; letter-spacing: 0.3em; margin-bottom: 20px; height: 45px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+        ••••
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;">
+        <button class="choice-label" style="justify-content: center; font-size: 1.3rem; font-weight: 800; padding: 14px;" onclick="enterPin('1')">1</button>
+        <button class="choice-label" style="justify-content: center; font-size: 1.3rem; font-weight: 800; padding: 14px;" onclick="enterPin('2')">2</button>
+        <button class="choice-label" style="justify-content: center; font-size: 1.3rem; font-weight: 800; padding: 14px;" onclick="enterPin('3')">3</button>
+        <button class="choice-label" style="justify-content: center; font-size: 1.3rem; font-weight: 800; padding: 14px;" onclick="enterPin('4')">4</button>
+        <button class="choice-label" style="justify-content: center; font-size: 1.3rem; font-weight: 800; padding: 14px;" onclick="enterPin('5')">5</button>
+        <button class="choice-label" style="justify-content: center; font-size: 1.3rem; font-weight: 800; padding: 14px;" onclick="enterPin('6')">6</button>
+        <button class="choice-label" style="justify-content: center; font-size: 1.3rem; font-weight: 800; padding: 14px;" onclick="enterPin('7')">7</button>
+        <button class="choice-label" style="justify-content: center; font-size: 1.3rem; font-weight: 800; padding: 14px;" onclick="enterPin('8')">8</button>
+        <button class="choice-label" style="justify-content: center; font-size: 1.3rem; font-weight: 800; padding: 14px;" onclick="enterPin('9')">9</button>
+        <button class="choice-label" style="justify-content: center; font-size: 1.1rem; color: var(--accent-rose);" onclick="clearPin()">C</button>
+        <button class="choice-label" style="justify-content: center; font-size: 1.3rem; font-weight: 800; padding: 14px;" onclick="enterPin('0')">0</button>
+        <button class="choice-label" style="justify-content: center; font-size: 1.1rem; color: var(--accent-emerald);" onclick="submitPin()">✓</button>
+      </div>
+      <div style="font-size: 0.72rem; color: var(--text-dim);">Varsayılan Bar Kodu: 1977</div>
+    </div>
+  </div>
+
+  <div class="admin-container" id="adminMainContent" style="display: none;">
+    <!-- Admin Header -->
+    <header class="admin-header">
+      <div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 1.8rem;">🐻☕</span>
+          <div>
+            <h1 style="font-size: 1.3rem; font-weight: 900; letter-spacing: -0.01em;">MACKBEAR KITCHEN DISPLAY</h1>
+            <p style="font-size: 0.78rem; color: var(--primary); font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;">Mutfak & Bar Sipariş Takip Sistemi</p>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <button id="lockAdminBtn" title="Paneli Kapat" style="padding: 8px 14px; background: rgba(244, 63, 94, 0.15); border: 1px solid var(--accent-rose); color: var(--accent-rose); border-radius: var(--radius-sm); font-weight: 700; font-size: 0.82rem; cursor: pointer;">
+          🔒 Paneli Kilitle
+        </button>
+        <div class="badge-pill" style="background: var(--accent-emerald); color: white; padding: 6px 12px; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+          <span style="display: inline-block; width: 8px; height: 8px; background: white; border-radius: 50%; animation: pulse 1s infinite;"></span>
+          Canlı Mutfak Bağlantısı Aktif
+        </div>
+        <button class="select-table-btn no-print" id="clearOrdersBtn" style="color: var(--accent-rose); border-color: rgba(244, 63, 94, 0.3);">
+          🗑️ Tüm Geçmişi Temizle
+        </button>
+      </div>
+    </header>
+
+    <!-- Bildirim / Çağrı Alanı -->
+    <div id="notificationsArea" style="margin-bottom: 20px;">
+      <div id="notificationsList"></div>
+    </div>
+
+    <!-- Admin Navigation Tabs -->
+    <nav class="admin-nav-tabs no-print">
+      <button class="admin-tab active" data-tab="kds">👨‍🍳 Sipariş Ekranı (KDS)</button>
+      <button class="admin-tab" data-tab="qr_gen">📱 Masa QR Kod Üreteci</button>
+      <button class="admin-tab" data-tab="menu_cms">📖 Menü & Ürün Yönetimi</button>
+      <button class="admin-tab" data-tab="stats">📊 Günlük Ciro & Rapor</button>
+    </nav>
+
+    <!-- TAB 1: KITCHEN DISPLAY SYSTEM (KDS) -->
+    <div class="tab-content" id="tab_kds" style="display: block;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <select id="kdsFilterSelect" class="select-table-btn" style="padding: 8px 14px;">
+            <option value="active">🟢 Aktif Siparişler (Hazırlananlar & Bekleyenler)</option>
+            <option value="received">🔴 Sadece Yeni Gelen Siparişler</option>
+            <option value="preparing">🔵 Sadece Hazırlananlar</option>
+
+            <option value="ready">⚡ Sadece Barda Bekleyenler</option>
+            <option value="all">📁 Tüm Sipariş Geçmişi</option>
+          </select>
+        </div>
+        <div style="display: flex; gap: 16px; font-size: 0.9rem; color: var(--text-muted);">
+          <div>Bekleyen Sipariş: <strong id="activeOrdersCount" style="color: var(--primary);">0</strong></div>
+          <div>Bardan Alım Bekleyen: <strong id="waiterCallsCount" style="color: var(--accent-rose);">0</strong></div>
+          <div>Bugünkü Ciro: <strong id="totalRevenue" style="color: var(--accent-emerald);">0 ₺</strong></div>
+        </div>
+      </div>
+
+      <div class="kds-grid" id="kdsGrid">
+        <!-- Dinamik Sipariş Biletleri -->
+      </div>
+    </div>
+
+    <!-- TAB 2: MASA QR KOD ÜRETECİ -->
+    <div class="tab-content" id="tab_qr_gen" style="display: none;">
+      <div class="no-print" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+        <div>
+          <h3 style="font-size: 1.1rem; color: var(--text-main); margin-bottom: 4px;">Masa QR Kodları (Güvenlik Korumalı)</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Bu QR kodları çıktı alıp masalarınızın üzerine yapıştırabilirsiniz. QR kodlar kafe içi güvenlik imzası içerir.</p>
+        </div>
+        <button class="view-cart-btn" id="printQRsBtn">
+          🖨️ Masa QR Kodlarını Yazdır / PDF İndir
+        </button>
+      </div>
+
+      <div class="qr-print-grid" id="qrGrid">
+        <!-- Dinamik Masa QR Kartları -->
+      </div>
+    </div>
+
+    <!-- TAB 3: MENÜ VE ÜRÜN YÖNETİMİ (CMS) -->
+    <div class="tab-content" id="tab_menu_cms" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <h3 style="font-size: 1.1rem; color: var(--text-main);">Menü ve Ürün Düzenleme</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Ürün isimlerini, fiyatlarını, açıklamalarını ve fotoğraflarını yönetin.</p>
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button class="view-cart-btn" id="addNewProductBtn">
+            ➕ Yeni Ürün & Fotoğraf Ekle
+          </button>
+          <button class="select-table-btn" id="downloadMenuJsonBtn" style="background: var(--primary-light); color: var(--primary); border-color: var(--border-active); font-weight: 700;">
+            📥 Güncel menu.json İndir (GitHub İçin)
+          </button>
+          <label class="select-table-btn" style="cursor: pointer; font-weight: 700;">
+            📤 Dosyadan İçe Aktar
+            <input type="file" id="importMenuJsonInput" accept=".json" style="display: none;" />
+          </label>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;" id="menuCmsGrid">
+        <!-- Dinamik Ürün Yönetim Listesi -->
+      </div>
+    </div>
+
+    <!-- TAB 4: İSTATİSTİK & RAPORLAR -->
+    <div class="tab-content" id="tab_stats" style="display: none;">
+      <h3 style="font-size: 1.1rem; color: var(--text-main); margin-bottom: 16px;">Günün Satış Özeti</h3>
+      <div id="statsContainer">
+        <!-- Dinamik istatistik kartları -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Ürün Ekle / Düzenle Modal -->
+  <div class="modal-overlay" id="productFormModal">
+    <div class="bottom-sheet" style="max-width: 500px; margin: 0 auto; border-radius: var(--radius-lg);">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <h3 id="productFormTitle" style="font-size: 1.1rem; color: var(--text-main);">➕ Yeni Ürün & Fotoğraf Ekle</h3>
+        <button class="close-btn" id="closeProductFormBtn">&times;</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <input type="hidden" id="editProductId" />
+
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 6px;">Ürün Fotoğrafı</label>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <img id="formImagePreview" src="https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=500&auto=format&fit=crop&q=80" style="width: 75px; height: 75px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--border-subtle);" />
+            <div style="flex: 1;">
+              <label class="select-table-btn" style="cursor: pointer; text-align: center; justify-content: center; width: 100%; font-weight: 700; background: var(--primary-light); color: var(--primary); border-color: var(--border-active);">
+                📸 Kameradan Çek / Galeriden Yükle
+                <input type="file" id="formProductFileInput" accept="image/*" style="display: none;" />
+              </label>
+              <div style="font-size: 0.72rem; color: var(--text-dim); margin-top: 4px;" id="imageSizeInfo">Otomatik olarak optimize edilip sıkıştırılır.</div>
+            </div>
+          </div>
+          <input type="hidden" id="formProductImage" />
+        </div>
+
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 4px;">Ürün Adı</label>
+          <input type="text" id="formProductName" class="search-input-wrap" style="width: 100%; padding: 10px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); color: white;" placeholder="Örn: Cool-Lime Refresha" />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div>
+            <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 4px;">Kategori</label>
+            <select id="formProductCategory" style="width: 100%; padding: 10px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); color: white;">
+              <option value="hot_coffee">☕ Sıcak Kahveler</option>
+              <option value="cold_coffee">🧊 Soğuk Kahveler</option>
+              <option value="tea">🫖 Çay & Bitki Çayları</option>
+              <option value="desserts">🍰 Tatlılar & Pastalar</option>
+              <option value="food">🥪 Yiyecek & Sandviç</option>
+              <option value="cold_drinks">🥤 Soğuk İçecekler</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 4px;">Fiyat (₺)</label>
+            <input type="number" id="formProductPrice" style="width: 100%; padding: 10px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); color: white;" placeholder="90" />
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 4px;">Stok Durumu</label>
+          <select id="formProductStock" style="width: 100%; padding: 10px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); color: white;">
+            <option value="true">✅ Stokta Var (Satışta)</option>
+            <option value="false">❌ Tükendi (Stokta Yok)</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 4px;">Ürün Açıklaması</label>
+          <textarea id="formProductDesc" class="note-input" rows="2" placeholder="Ürünün içeriği ve özellikleri..."></textarea>
+        </div>
+
+        <button id="saveProductBtn" class="view-cart-btn" style="width: 100%; justify-content: center; margin-top: 10px;">
+          💾 Ürünü ve Fotoğrafı Kaydet
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
