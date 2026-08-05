@@ -65,6 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initApp();
 
   async function initApp() {
+	  // TELEFONUN ESKİ MENÜ HAFIZASINI ZORLA SİLEN KOD
+    localStorage.removeItem('cafe_products');
     updateTableUI();
     renderCategories();
     updateCartUI();

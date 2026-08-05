@@ -433,7 +433,7 @@ const DEFAULT_PRODUCTS = [
     price: 175,
     image: "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=600&q=80",
     popular: true,
-    inStock: true,
+    inStock: false,
     badges: ["Sıcak Panini"],
     options: []
   },
@@ -457,7 +457,7 @@ const DEFAULT_PRODUCTS = [
     price: 95,
     image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=600&q=80",
     popular: true,
-    inStock: true,
+    inStock: false,
     badges: ["Taze Fırın"],
     options: []
   },
