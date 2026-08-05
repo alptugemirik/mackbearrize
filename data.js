@@ -508,18 +508,6 @@ const DEFAULT_PRODUCTS = [
     inStock: true,
     badges: ["Sıcak Pizza"],
     options: []
-  },
-  {
-    id: "mb_tost_karisik",
-    categoryId: "food",
-    name: "Tost Karışık",
-    description: "Kasap sucuk, bol kaşar peyniri ve domates dilimleri ile tost ekmeğinde.",
-    price: 120,
-    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=80",
-    popular: true,
-    inStock: true,
-    badges: ["Tost"],
-    options: []
   }
 ];
 
@@ -584,13 +572,14 @@ class CafeStore {
   }
 
   static async fetchProductsFromCloud() {
-    // Doğrudan menu.json dosyasını çek (Tek ve Kesin Kaynak)
+    // Doğrudan sunucudaki / GitHub Pages'deki menu.json dosyasını çek (ÖNCELİKLİ TEK GERÇEK KAYNAK)
     try {
       const res = await fetch(`menu.json?v=${Date.now()}`, { cache: 'no-store' });
       if (res.ok) {
         const fileProducts = await res.json();
         if (fileProducts && Array.isArray(fileProducts) && fileProducts.length > 0) {
           try {
+            // YENİ GÜNCEL DOSYADAKİ SİLİNMİŞ VEYA DEĞİŞMİŞ ÜRÜNLERİ ANINDA TARAYICI HAFIZASINA BASSIN
             localStorage.setItem('cafe_products', JSON.stringify(fileProducts));
           } catch (e) {}
           return fileProducts;
