@@ -574,7 +574,7 @@
     "price": 135,
     "image": "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=600&q=80",
     "popular": true,
-    "inStock": false,
+    "inStock": true,
     "badges": [
       "İtalyan"
     ],
