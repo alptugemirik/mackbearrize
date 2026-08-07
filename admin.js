@@ -169,20 +169,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function playAlertSound() {
+ function playAlertSound() {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-      osc.frequency.setValueAtTime(880, ctx.currentTime + 0.15);
-      gain.gain.setValueAtTime(0.4, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.5);
+      
+      // Dikkat çekici, tekrarlayan 3'lü uyarı tonu
+      const playOscillator = (freq, type, startTime, duration) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + startTime);
+        
+        gain.gain.setValueAtTime(0.6, ctx.currentTime + startTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + startTime + duration);
+        
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        
+        osc.start(ctx.currentTime + startTime);
+        osc.stop(ctx.currentTime + startTime + duration);
+      };
+
+      // Tiz frekanslar mutfak/blender gürültüsünü aşar
+      playOscillator(800, 'square', 0, 0.15);
+      playOscillator(1200, 'square', 0.2, 0.15);
+      playOscillator(1600, 'square', 0.4, 0.2);
+      
     } catch (e) {}
   }
 
@@ -211,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (state.activeTab === 'stats') renderStats();
   }
 
-  function updateHeaderStats() {
+function updateHeaderStats() {
     state.orders = CafeStore.getOrders();
     state.notifications = CafeStore.getNotifications();
 
@@ -221,6 +233,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (activeOrdersCountEl) activeOrdersCountEl.textContent = activeOrders.length;
     if (totalRevenueEl) totalRevenueEl.textContent = `${totalRev} ₺`;
     if (waiterCallsCountEl) waiterCallsCountEl.textContent = activeOrders.filter(o => o.status === 'ready').length;
+
+    // YENİ EKLENEN KISIM: 3 Saniyelik Tekrarlayan Alarm Döngüsü
+    // Durumu "received" (Yeni gelmiş, henüz onaylanmamış) olan sipariş var mı kontrol et
+    const hasNewOrder = state.orders.some(o => o.status === 'received');
+    
+    if (hasNewOrder) {
+      // Eğer yeni sipariş varsa ve alarm zaten çalmıyorsa başlat
+      if (!window.orderAlarmInterval) {
+        playAlertSound(); // İlk alarmı anında çal
+        window.orderAlarmInterval = setInterval(playAlertSound, 3000); // 3 saniyede bir tekrarla
+      }
+    } else {
+      // Bekleyen sipariş kalmadıysa (barista onayladıysa) alarmı sustur
+      if (window.orderAlarmInterval) {
+        clearInterval(window.orderAlarmInterval);
+        window.orderAlarmInterval = null;
+      }
+    }
   }
 
   function renderNotifications() {
