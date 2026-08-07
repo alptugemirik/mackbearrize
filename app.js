@@ -612,6 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
     submitOrderBtn.disabled = false;
     submitOrderBtn.textContent = '🚀 Siparişi Onayla ve Gönder';
 
+    // ... submitOrder fonksiyonunun son kısımları
     state.currentOrder = newOrder;
     state.cart = [];
     saveDraftCart();
@@ -619,22 +620,25 @@ document.addEventListener('DOMContentLoaded', () => {
     closeAllModals();
 
     renderOrderTracker(newOrder);
+    requestWakeLock(); // YENİ: Sipariş gönderildiğinde ekranı uyanık tut
     showToast(`📡 Sipariş İletildi - Mutfak Ekibinin Onayı Bekleniyor...`, 'info');
   }
 
-  function checkActiveOrder() {
+function checkActiveOrder() {
     const orders = CafeStore.getOrders();
     const active = orders.find(o => o.table === state.selectedTable && o.status && o.status !== 'completed');
 
     if (active) {
       state.currentOrder = active;
       renderOrderTracker(active);
+      requestWakeLock(); // YENİ: Sipariş varsa ekranı uyanık tut
       if (active.status === 'ready') {
         startSelfServiceFlashAlert(active);
       }
     } else {
       state.currentOrder = null;
       if (liveOrderTrackerSection) liveOrderTrackerSection.style.display = 'none';
+      releaseWakeLock(); // YENİ: Sipariş yoksa ekranı serbest bırak
     }
   }
 
@@ -674,6 +678,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (liveOrderTrackerSection) liveOrderTrackerSection.style.display = 'none';
+    releaseWakeLock(); // YENİ: Sipariş bitti, ekranı serbest bırak (artık kararabilir)
     showToast(`✨ Afiyet olsun! Sipariş teslim alındı.`, 'success');
   }
 
@@ -800,4 +805,32 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => toast.remove(), 300);
     }, 3500);
   }
-});
+// --- EKRAN UYANIK TUTMA (WAKE LOCK) İŞLEMLERİ ---
+  let wakeLock = null;
+
+  async function requestWakeLock() {
+    if ('wakeLock' in navigator) {
+      try {
+        wakeLock = await navigator.wakeLock.request('screen');
+      } catch (err) {
+        console.warn('Wake Lock hatası:', err);
+      }
+    }
+  }
+
+  async function releaseWakeLock() {
+    if (wakeLock !== null) {
+      try {
+        await wakeLock.release();
+        wakeLock = null;
+      } catch (err) {}
+    }
+  }
+
+  // Müşteri ekranı alta atıp tekrar açarsa kilidi yenile
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && state.currentOrder && state.currentOrder.status !== 'completed') {
+      requestWakeLock();
+    }
+  });
+  });

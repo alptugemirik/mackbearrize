@@ -47,22 +47,30 @@
     </header>
 
     <!-- CANLI SİPARİŞ DURUM İLERLEME ÇUBUĞU (STEPPER PROGRESS BAR) -->
+  <!-- CANLI SİPARİŞ DURUM İLERLEME ÇUBUĞU (STEPPER PROGRESS BAR) -->
     <div id="liveOrderTrackerSection" style="display: none;">
       <div class="live-tracker-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <div
-            style="font-size: 0.85rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 6px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div style="font-size: 0.85rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 6px;">
             <span>⚡ CANLI SİPARİŞ TAKİBİ</span>
             <span id="trackerOrderId" style="color: var(--text-muted); font-size: 0.78rem;">(#ORD-0000)</span>
           </div>
-          <div id="trackerStatusBadge"
-            style="font-size: 0.75rem; font-weight: 700; background: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: var(--radius-full);">
+          <div id="trackerStatusBadge" style="font-size: 0.75rem; font-weight: 700; background: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: var(--radius-full);">
             Sipariş İletildi
           </div>
         </div>
 
+        <!-- YENİ EKLENEN UYARI MESAJI -->
+        <div style="background: rgba(244, 63, 94, 0.15); border: 1px solid var(--accent-rose); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 16px; display: flex; gap: 10px; align-items: flex-start; animation: pulseBorder 2s infinite;">
+          <span style="font-size: 1.4rem;">⚠️</span>
+          <div>
+            <div style="font-size: 0.85rem; font-weight: 800; color: var(--accent-rose); margin-bottom: 2px;">ÖNEMLİ UYARI</div>
+            <div style="font-size: 0.75rem; color: var(--text-main); line-height: 1.4;">Siparişiniz hazır olduğunda size sesli ve görsel flaş uyarısı verebilmemiz için lütfen <strong>siparişinizi teslim alana kadar bu sayfayı kapatmayın.</strong></div>
+          </div>
+        </div>
+
         <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;" id="trackerSubText">
-          Siparişiniz mutfak ekranına ulaştı.
+          Siparişiniz Baristaya ulaştı.
         </div>
 
         <!-- 3 Adımlı İlerleme Çubuğu -->
