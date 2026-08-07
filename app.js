@@ -751,7 +751,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tableBody = document.getElementById('tableModalBody');
     if (!tableBody) return;
 
-    const tables = Array.from({ length: 12 }, (_, i) => `Masa ${String(i + 1).padStart(2, '0')}`);
+    const tables = Array.from({ length: 60 }, (_, i) => `Masa ${String(i + 1).padStart(2, '0')}`);
 
     tableBody.innerHTML = `
       <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">Oturduğunuz masayı seçiniz:</p>

@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!qrGridEl) return;
     
     const baseUrl = getCustomerBaseUrl();
-    const tables = Array.from({ length: 8 }, (_, i) => `Masa ${String(i + 1).padStart(2, '0')}`);
+    const tables = Array.from({ length: 60 }, (_, i) => `Masa ${String(i + 1).padStart(2, '0')}`);
 
     qrGridEl.innerHTML = tables.map(t => {
       const tableToken = CafeStore.getTableSecurityToken(t);
